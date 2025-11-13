@@ -1,9 +1,12 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 import threading
 from contextlib import asynccontextmanager
+from services.weather_service import WeatherService
+from dto.weather_dto import WeatherDTO
+from repositories.weather_repo import WeatherRepository
 
 background_thread = None
 stop_event = threading.Event()
@@ -18,7 +21,6 @@ def bme280_background_task():
         print(f"Error in bme280_background_task: {error}")
         import traceback
         traceback.print_exc()
-    
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -52,11 +54,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+weather_repo = WeatherRepository(db_session=None)
+weather_service = WeatherService(weather_repo=weather_repo)
+
 @app.get("/")
 def root():
     return {
         "message": "hello word"
     }
     
+@app.get("/weather", response_model=WeatherDTO)
+async def get_weather_data():
+    response = weather_service.get_data_from_bme280()
+    return response
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
