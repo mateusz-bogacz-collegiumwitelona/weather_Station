@@ -3,6 +3,7 @@ import smbus2
 from time import sleep
 from datetime import datetime
 from dto.weather_dto import WeatherDTO
+from database import WeatherData
 
 # bme280 setup
 port = 1
@@ -21,8 +22,27 @@ class WeatherRepository:
         ambient_temperature = bme280_data.temperature
         
         return WeatherDTO(
-            temperature=ambient_temperature,
-            humidity=humidity,
-            pressure=pressure,
+            temperature=round(ambient_temperature, 2),
+            humidity=round(humidity, 2),
+            pressure=round(pressure, 2),
             timestamp=datetime.utcnow()
         ) 
+    
+    def save_weather_data(self, weather_data: WeatherDTO) -> bool:
+        try:
+            weather_record = WeatherData(
+                temperature=weather_data.temperature,
+                humidity=weather_data.humidity,
+                pressure=weather_data.pressure,
+                timestamp=weather_data.timestamp
+            )
+            
+            self.db_session.add(weather_record)
+            self.db_session.commit()
+            
+            return True
+        
+        except Exception as error:
+            self.db_session.rollback()
+            print(f"Error saving weather data: {error}")
+            return False

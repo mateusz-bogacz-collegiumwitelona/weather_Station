@@ -11,6 +11,11 @@ class WeatherService:
             if response is None:
                 raise Exception("No data received from BME280 sensor")
             
+            isSaved = self.weather_repo.save_weather_data(response)
+            
+            if not isSaved:
+                raise Exception("Failed to save weather data to the database")
+            
             return response
         
         except Exception as error:

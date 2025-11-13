@@ -7,9 +7,17 @@ from contextlib import asynccontextmanager
 from services.weather_service import WeatherService
 from dto.weather_dto import WeatherDTO
 from repositories.weather_repo import WeatherRepository
+from database import SessionLocal
 
 background_thread = None
 stop_event = threading.Event()
+
+def get_db():
+   db = SessionLocal()
+   try:
+       yield db
+   finally:
+       db.close()
 
 def bme280_background_task():
     try:
@@ -54,8 +62,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-weather_repo = WeatherRepository(db_session=None)
-weather_service = WeatherService(weather_repo=weather_repo)
 
 @app.get("/")
 def root():
@@ -64,7 +70,9 @@ def root():
     }
     
 @app.get("/weather", response_model=WeatherDTO)
-async def get_weather_data():
+async def get_weather_data(db=Depends(get_db)):
+    weather_repo = WeatherRepository(db_session=db)
+    weather_service = WeatherService(weather_repo=weather_repo)
     response = weather_service.get_data_from_bme280()
     return response
 
