@@ -28,12 +28,15 @@ def save_data_to_db(temp, hum, press):
     finally:
         db.close()    
 
-def main():
-    print("Station started...")
-    print("------------------")
+def main(stop_event=None):
+    print("Station started...\n")
     print("Readings every 60 seconds...\n")
     
     while True:
+        if stop_event and stop_event.is_set():
+            print("\nStopping background task...")
+            break
+        
         try:
             bmp280_data = bme280.sample(bus,address)
             humidity  = bmp280_data.humidity
