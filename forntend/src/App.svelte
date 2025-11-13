@@ -1,47 +1,58 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+    import { onMount } from "svelte";
+
+    interface WeatherData {
+      temperature: number;
+      humidity: number;
+      pressure: number;
+      timestamp: Date;
+    }
+
+    const apiUrl: string = "http://localhost:8000"
+    let weatherData: WeatherData | null = null;
+    let error: string | null = null;
+    
+    function fetchWeatherData(): Promise<weatherData> {
+      return fetch(`${apiUrl}/weather`)
+        .then((response) => {
+          if (!response.ok) throw new Error("Network response was not ok");
+          return response.json();
+        })
+        .then((data) => ({
+          temperature: data.temperature,
+          humidity: data.humidity,
+          pressure: data.pressure,
+          timestamp: new Date(data.timestamp),
+        }));
+    }
+
+    onMount(async () => {
+      try {
+        weatherData = await fetchWeatherData();
+      } catch (e: any) {
+        error = e.message;
+      }
+    });
 </script>
 
 <main>
-  <div>
-    <a href="https://vite.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
-
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+  {#if error}
+    <p>Error: {error}</p>
+  {:else if weatherData}
+    <h1>Current Weather</h1>
+    <p>Temperature: {weatherData.temperature} °C</p>
+    <p>Humidity: {weatherData.humidity} %</p>
+    <p>Pressure: {weatherData.pressure} hPa</p>
+    <p>Last Updated: {weatherData.timestamp.toLocaleString()}</p>
+  {:else}
+    <p>Loading weather data...</p>
+    
+  {/if}
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
+main {
+    font-family: sans-serif;
+    padding: 1em;
   }
 </style>
