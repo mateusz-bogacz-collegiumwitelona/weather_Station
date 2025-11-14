@@ -7,12 +7,14 @@
 ## Wymagania
 
 ### Sprzętowe
+
 - Raspberry Pi z systemem **Raspberry Pi OS**
 - Czujnik **BME280**
 - Kable połączeniowe
 - Płytka prototypowa
 
 ### Programowe
+
 - **Python**
 - **Node.js** z **npm**
 
@@ -20,12 +22,16 @@
 
 ## Podłączenie BME280 do Raspberry Pi
 
-| Raspberry Pi GPIO | BME280   |
-|------------------|----------|
-| 17 (3.3V)        | Vin      |
-| 6 (GND)          | GND      |
-| 3 (SDA)          | SDA (SDI)|
-| 5 (SCL)          | SCL (SDK)|
+| Raspberry Pi GPIO | BME280    |
+| ----------------- | --------- |
+| 17 (3.3V)         | Vin       |
+| 6 (GND)           | GND       |
+| 3 (SDA)           | SDA (SDI) |
+| 5 (SCL)           | SCL (SDK) |
+
+### Schemat połączeń
+
+![Schemat połączenia BME280](/images/schemat.png)
 
 ---
 
@@ -54,10 +60,14 @@
    python -m venv .venv
    ```
 4. Aktywuj środowisko:
-**Linux/Mac:**
-   ```bash
-   source .venv/bin/activate
-   ```
+   - **Windows:**
+     ```bash
+     .venv\Scripts\activate
+     ```
+   - **Linux/Mac:**
+     ```bash
+     source .venv/bin/activate
+     ```
 5. Zainstaluj zależności:
    ```bash
    pip install -r requirements.txt
@@ -84,6 +94,13 @@
    ```bash
    npm run preview
    ```
+
+---
+
+## Zdjęcia rzeczywiste
+
+![Raspberry Pi z BME280 - zdjęcie 1](/images/real_1.jpg)
+![Raspberry Pi z BME280 - zdjęcie 2](/images/real_2.jpg)
 
 ---
 
