@@ -61,21 +61,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.get("/")
-def root():
-    return {
-        "message": "hello word"
-    }
     
-@app.get("/weather", response_model=WeatherDTO)
+@app.get("/", response_model=WeatherDTO)
 async def get_weather_data(db=Depends(get_db)):
     weather_repo = WeatherRepository(db_session=db)
     weather_service = WeatherService(weather_repo=weather_repo)
     response = weather_service.get_data_from_bme280()
     return response
 
+@app.get("/history", response_model=list[WeatherDTO])
+async def get_weather_history(db=Depends(get_db)):
+    weather_repo = WeatherRepository(db_session=db)
+    weather_service = WeatherService(weather_repo=weather_repo)
+    response = weather_service.get_weather_history()
+    return response
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -46,3 +46,18 @@ class WeatherRepository:
             self.db_session.rollback()
             print(f"Error saving weather data: {error}")
             return False
+        
+    def get_weather_history(self) -> list[WeatherDTO]:
+        records = self.db_session.query(WeatherData) \
+                    .order_by(WeatherData.timestamp.desc()).all()
+        
+        weather_history = [
+            WeatherDTO(
+                temperature=record.temperature,
+                humidity=record.humidity,
+                pressure=record.pressure,
+                timestamp=record.timestamp
+            ) for record in records
+        ]    
+        
+        return weather_history

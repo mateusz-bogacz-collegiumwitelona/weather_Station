@@ -14,7 +14,7 @@
     
 
     async function fetchWeatherData(): Promise<WeatherData> {
-      const res = await fetch(`${apiUrl}/weather`);
+      const res = await fetch(`${apiUrl}`);
       if (!res.ok) throw new Error("Network response was not ok");
       const data = await res.json();
       return {
