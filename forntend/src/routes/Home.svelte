@@ -1,17 +1,12 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-
-    interface WeatherData {
-      temperature: number;
-      humidity: number;
-      pressure: number;
-      timestamp: Date;
-    }
-
+    import Navbar from "../components/Navbar.svelte";
+    import type { WeatherData } from "../types/weather";
+    
     const apiUrl: string = "http://localhost:8000"
     let weatherData: WeatherData | null = null;
     let error: string | null = null;
-    
+    let intervalId: number;    
 
     async function fetchWeatherData(): Promise<WeatherData> {
       const res = await fetch(`${apiUrl}`);
@@ -24,8 +19,6 @@
         timestamp: new Date(data.timestamp),
       };
     }
-
-    let intervalId: number;
 
     onMount(() => {
       fetchWeatherData()
@@ -47,22 +40,7 @@
     });
 </script>
 
-<nav class="bg-gradient-to-r from-blue-600 to-blue-800 shadow-lg">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <div class="flex items-center">
-        <svg class="w-8 h-8 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
-        </svg>
-        <span class="text-white text-xl font-bold">Weather Station</span>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="text-blue-100 text-sm">Live Data</span>
-        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-      </div>
-    </div>
-  </div>
-</nav>
+<Navbar />
 
 <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
