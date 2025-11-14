@@ -119,7 +119,7 @@
         <div class="bg-gray-50 px-8 py-4 border-t border-gray-200">
           <div class="flex items-center justify-between text-sm">
             <span class="text-gray-600">Last Updated:</span>
-            <span class="text-gray-800 font-medium">{weatherData.timestamp.toLocaleTimeString('pl-PL')}</span>
+            <span class="text-gray-800 font-medium">{weatherData.timestamp.toLocaleTimeString()}</span>
           </div>
         </div>
       </div>

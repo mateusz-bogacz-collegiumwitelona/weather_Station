@@ -25,7 +25,7 @@ class WeatherRepository:
             temperature=round(ambient_temperature, 2),
             humidity=round(humidity, 2),
             pressure=round(pressure, 2),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now()
         ) 
     
     def save_weather_data(self, weather_data: WeatherDTO) -> bool:
