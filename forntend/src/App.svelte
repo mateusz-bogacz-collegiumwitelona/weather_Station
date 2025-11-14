@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
 
     interface WeatherData {
       temperature: number;
@@ -12,26 +12,38 @@
     let weatherData: WeatherData | null = null;
     let error: string | null = null;
     
-    function fetchWeatherData(): Promise<weatherData> {
-      return fetch(`${apiUrl}/weather`)
-        .then((response) => {
-          if (!response.ok) throw new Error("Network response was not ok");
-          return response.json();
-        })
-        .then((data) => ({
-          temperature: data.temperature,
-          humidity: data.humidity,
-          pressure: data.pressure,
-          timestamp: new Date(data.timestamp),
-        }));
+
+    async function fetchWeatherData(): Promise<WeatherData> {
+      const res = await fetch(`${apiUrl}/weather`);
+      if (!res.ok) throw new Error("Network response was not ok");
+      const data = await res.json();
+      return {
+        temperature: data.temperature,
+        humidity: data.humidity,
+        pressure: data.pressure,
+        timestamp: new Date(data.timestamp),
+      };
     }
 
-    onMount(async () => {
-      try {
-        weatherData = await fetchWeatherData();
-      } catch (e: any) {
-        error = e.message;
-      }
+    let intervalId: number;
+
+    onMount(() => {
+      fetchWeatherData()
+        .then((data) => (weatherData = data))
+        .catch((err) => (error = err.message));
+
+      intervalId = setInterval(async () => {
+        try {
+          weatherData = await fetchWeatherData();
+
+        } catch (err: any) {
+          error = err.message;
+        }
+      }, 60000); // co 60 sekund
+    });
+
+    onDestroy(() => {
+      clearInterval(intervalId);
     });
 </script>
 
@@ -46,7 +58,6 @@
     <p>Last Updated: {weatherData.timestamp.toLocaleString()}</p>
   {:else}
     <p>Loading weather data...</p>
-    
   {/if}
 </main>
 
