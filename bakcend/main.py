@@ -9,7 +9,8 @@ from dto.weather_dto import WeatherDTO
 from repositories.weather_repo import WeatherRepository
 from database import SessionLocal
 
-background_thread = None
+bme280_thread = None
+st7735_thread = None
 stop_event = threading.Event()
 
 def get_db():
@@ -30,24 +31,51 @@ def bme280_background_task():
         import traceback
         traceback.print_exc()
 
+def st7735_background_task():
+    try:
+        import st7735_display
+        print ("st7735_display module imported successfully.")
+        
+        st7735_display.main(stop_event)
+    except Exception as error:
+        print(f"Error in st7735_background_task: {error}")
+        import traceback
+        traceback.print_exc()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global background_thread
+    global bme280_thread, st7735_thread
     
-    print("Starting background task...")
+    print("\nStarting Weather Station")
     stop_event.clear()
-    background_thread = threading.Thread(target=bme280_background_task, daemon=True)
-    background_thread.start()
-    print(f"\nBackground task started: {background_thread.is_alive()}")
+    
+    print("Starting BME280 sensor thread...")
+    bme280_thread = threading.Thread(target=bme280_background_task, daemon=True)
+    bme280_thread.start()
+    print(f"BME280 thread started: {bme280_thread.is_alive()}")
+    
+    print("Starting display thread...")
+    st7735_thread = threading.Thread(target=st7735_background_task, daemon=True)
+    st7735_thread.start()
+    print(f"Display thread started: {st7735_thread.is_alive()}")
+    
+    print("Weather Station Ready\n")
     
     yield
     
-    print("\nStopping background task...")
+    print("\nStopping Weather Station")
     stop_event.set()
-    if background_thread:
-        background_thread.join(timeout=5)
-        print("Background task stopped.")
     
+    if bme280_thread:
+        bme280_thread.join(timeout=5)
+        print("BME280 thread stopped.")
+    
+    if st7735_thread:
+        st7735_thread.join(timeout=5)
+        print("Display thread stopped.")
+    
+    print("Weather Station Stopped\n")
+
 app = FastAPI(
     title="Weather Station API", 
     version="v1",
