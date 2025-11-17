@@ -60,14 +60,9 @@
    python -m venv .venv
    ```
 4. Aktywuj środowisko:
-   - **Windows:**
-     ```bash
-     .venv\Scripts\activate
-     ```
-   - **Linux/Mac:**
-     ```bash
-     source .venv/bin/activate
-     ```
+   ```bash
+   source .venv/bin/activate
+   ```
 5. Zainstaluj zależności:
    ```bash
    pip install -r requirements.txt

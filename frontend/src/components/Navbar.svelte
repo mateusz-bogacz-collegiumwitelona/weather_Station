@@ -16,6 +16,7 @@
       <div class="flex items-center space-x-4">
         <a href="/" use:link class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
         <a href="/history" use:link class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">History</a>
+        <a href="/create" use:link class="text-blue-100 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Create</a>
         <div class="flex items-center space-x-2">
           <span class="text-blue-100 text-sm">Live Data</span>
           <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
