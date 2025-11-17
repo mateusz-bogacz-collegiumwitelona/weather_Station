@@ -2,8 +2,9 @@
     import { onMount, onDestroy } from "svelte";
     import Navbar from "../components/Navbar.svelte";
     import type { WeatherData } from "../types/weather";
+    import { API_URL } from "../config";
     
-    const apiUrl: string = "http://localhost:8000"
+    const apiUrl: string = `${API_URL}`;
     let weatherData: WeatherData | null = null;
     let error: string | null = null;
     let intervalId: number;    

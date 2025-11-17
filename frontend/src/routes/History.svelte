@@ -2,8 +2,9 @@
     import { onMount, onDestroy } from "svelte";
     import Navbar from "../components/Navbar.svelte";
     import type { WeatherData } from "../types/weather";
-
-    const apiUrl: string = "http://localhost:8000/history";
+    import { API_URL } from "../config";
+    
+    const apiUrl: string = `${API_URL}/history`;
     let weatherData: WeatherData[] = [];
     let error: string | null = null;
     let loading: boolean = true;
